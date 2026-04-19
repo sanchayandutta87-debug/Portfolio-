@@ -1334,13 +1334,79 @@ body::after {
   .cursor-dot, .cursor-ring { display: none; }
 }
 
-/* ─── SPECIAL ANIMATIONS ─── */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+/* ─── HUD ELEMENTS ─── */
+.hud-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+.hud-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: var(--cyan);
+  border-style: solid;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.hud-corner--tl { top: 30px; left: 30px; border-width: 2px 0 0 2px; }
+.hud-corner--tr { top: 30px; right: 30px; border-width: 2px 2px 0 0; }
+.hud-corner--bl { bottom: 30px; left: 30px; border-width: 0 0 2px 2px; }
+.hud-corner--br { bottom: 30px; right: 30px; border-width: 0 2px 2px 0; }
+
+.hud-ticker {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--cyan);
+  opacity: 0.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ticker--left { bottom: 40px; left: 90px; }
+.ticker--right { bottom: 40px; right: 90px; text-align: right; }
+
+/* ─── SCANLINES ─── */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 9995;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  ),
+  linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.02),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.02)
+  );
+  background-size: 100% 4px, 3px 100%;
+  opacity: 0.15;
+}
+
+/* ─── ENHANCED NOISE ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes hud-blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.1; }
+}
+
+.hud-corner {
+  animation: hud-blink 4s infinite ease-in-out;
 }

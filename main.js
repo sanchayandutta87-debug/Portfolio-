@@ -85,116 +85,95 @@ function initLenis() {
   gsap.ticker.lagSmoothing(0);
 }
 
-/* ═══════════════════ THREE.JS PARTICLE CONSTELLATION ═══════════════════ */
+/* ═══════════════════ THREE.JS ROBOTIC ENGINE ═══════════════════ */
 function initThreeScene() {
   const container = document.getElementById('three-canvas');
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 50;
+  camera.position.z = 60;
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
-  // ── Particles ──
-  const particleCount = 2500;
+  // ── Core Group ──
+  const coreGroup = new THREE.Group();
+  scene.add(coreGroup);
+
+  // 1. Robotic Core (Nested Gears/Geometries)
+  const innerGeometry = new THREE.IcosahedronGeometry(4, 0);
+  const innerMaterial = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.3 });
+  const innerCore = new THREE.Mesh(innerGeometry, innerMaterial);
+  coreGroup.add(innerCore);
+
+  const outerGeometry = new THREE.OctahedronGeometry(7, 0);
+  const outerMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.1 });
+  const outerCore = new THREE.Mesh(outerGeometry, outerMaterial);
+  coreGroup.add(outerCore);
+
+  // 2. HUD Rings
+  const ring1 = new THREE.Mesh(
+    new THREE.TorusGeometry(10, 0.05, 16, 100),
+    new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.2 })
+  );
+  ring1.rotation.x = Math.PI / 2;
+  coreGroup.add(ring1);
+
+  const ring2 = new THREE.Mesh(
+    new THREE.TorusGeometry(12, 0.02, 16, 100, Math.PI),
+    new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.3 })
+  );
+  ring2.rotation.y = Math.PI / 4;
+  coreGroup.add(ring2);
+
+  // 3. Circuit Mesh Particles
+  const particleCount = 1500;
   const positions = new Float32Array(particleCount * 3);
   const velocities = [];
-  const spread = 100;
+  const spread = 120;
 
   for (let i = 0; i < particleCount; i++) {
     positions[i * 3] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 1] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
     velocities.push({
-      x: (Math.random() - 0.5) * 0.01,
-      y: (Math.random() - 0.5) * 0.01,
-      z: (Math.random() - 0.5) * 0.01,
+      x: (Math.random() - 0.5) * 0.005,
+      y: (Math.random() - 0.5) * 0.005,
+      z: (Math.random() - 0.5) * 0.005,
     });
   }
 
   const particleGeometry = new THREE.BufferGeometry();
   particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
   const particleMaterial = new THREE.PointsMaterial({
-    size: 0.15,
+    size: 0.2,
     color: 0x00f0ff,
     transparent: true,
-    opacity: 0.7,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
   });
-
   const particles = new THREE.Points(particleGeometry, particleMaterial);
   scene.add(particles);
 
-  // ── Connection Lines ──
-  const linesMaterial = new THREE.LineBasicMaterial({
-    color: 0x8b5cf6,
-    transparent: true,
-    opacity: 0.08,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
+  // 4. Data Streams (Fast moving particles)
+  const streamCount = 200;
+  const streamPos = new Float32Array(streamCount * 3);
+  for(let i=0; i<streamCount*3; i++) streamPos[i] = (Math.random() - 0.5) * spread;
+  const streamGeo = new THREE.BufferGeometry();
+  streamGeo.setAttribute('position', new THREE.BufferAttribute(streamPos, 3));
+  const streamMat = new THREE.PointsMaterial({ size: 0.3, color: 0xffffff, transparent: true, opacity: 0.8 });
+  const streams = new THREE.Points(streamGeo, streamMat);
+  scene.add(streams);
 
-  let linesGeometry = new THREE.BufferGeometry();
-  const lines = new THREE.LineSegments(linesGeometry, linesMaterial);
-  scene.add(lines);
-
-  // ── Central Energy Core ──
-  const coreGeometry = new THREE.IcosahedronGeometry(3, 2);
-  const coreMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00f0ff,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.15,
-    blending: THREE.AdditiveBlending,
-  });
-  const core = new THREE.Mesh(coreGeometry, coreMaterial);
-  scene.add(core);
-
-  const coreInnerGeometry = new THREE.IcosahedronGeometry(2, 1);
-  const coreInnerMaterial = new THREE.MeshBasicMaterial({
-    color: 0x8b5cf6,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.1,
-    blending: THREE.AdditiveBlending,
-  });
-  const coreInner = new THREE.Mesh(coreInnerGeometry, coreInnerMaterial);
-  scene.add(coreInner);
-
-  // ── Outer Ring ──
-  const ringGeometry = new THREE.TorusGeometry(6, 0.05, 16, 100);
-  const ringMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00f0ff,
-    transparent: true,
-    opacity: 0.2,
-    blending: THREE.AdditiveBlending,
-  });
-  const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-  ring.rotation.x = Math.PI / 2;
-  scene.add(ring);
-
-  const ring2 = new THREE.Mesh(
-    new THREE.TorusGeometry(8, 0.03, 16, 100),
-    new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending })
-  );
-  ring2.rotation.x = Math.PI / 3;
-  ring2.rotation.y = Math.PI / 6;
-  scene.add(ring2);
-
-  // ── Mouse tracking ──
+  // ── Motion Tracking ──
   const mouse = { x: 0, y: 0 };
   const targetMouse = { x: 0, y: 0 };
-
   window.addEventListener('mousemove', (e) => {
     targetMouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
     targetMouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
   });
 
-  // ── Resize ──
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -202,82 +181,54 @@ function initThreeScene() {
   });
 
   // ── Animate ──
-  const maxConnectionDist = 8;
   let frame = 0;
+  const tickerLeft = document.getElementById('ticker-left');
+  const tickerRight = document.getElementById('ticker-right');
+
+  function updateHUD() {
+    if (frame % 30 === 0) {
+      const hex = Math.floor(Math.random() * 0xffffff).toString(16).toUpperCase();
+      tickerLeft.textContent = `SYSTEM: ONLINE // ADDR: 0x${hex}`;
+      tickerRight.textContent = `SYNC: ${90 + Math.floor(Math.random() * 10)}% // CORE: ${Math.floor(Math.random() * 100)}%`;
+    }
+  }
 
   function animate() {
     requestAnimationFrame(animate);
     frame++;
 
-    // Smooth mouse
     mouse.x += (targetMouse.x - mouse.x) * 0.05;
     mouse.y += (targetMouse.y - mouse.y) * 0.05;
 
-    // Particle drift
-    const posArr = particleGeometry.attributes.position.array;
-    for (let i = 0; i < particleCount; i++) {
-      posArr[i * 3] += velocities[i].x;
-      posArr[i * 3 + 1] += velocities[i].y;
-      posArr[i * 3 + 2] += velocities[i].z;
+    // Core Animations
+    coreGroup.rotation.y += 0.005;
+    coreGroup.rotation.z += 0.002;
+    innerCore.rotation.x -= 0.01;
+    outerCore.rotation.y += 0.008;
+    
+    // Pulse effect
+    const hue = 0.5 + Math.sin(frame * 0.02) * 0.1;
+    innerMaterial.opacity = 0.2 + Math.sin(frame * 0.05) * 0.1;
+    
+    // Parallax
+    coreGroup.position.x = mouse.x * 5;
+    coreGroup.position.y = mouse.y * 5;
+    particles.rotation.y = mouse.x * 0.1;
 
-      // Wrap around
-      const bound = spread / 2;
-      if (Math.abs(posArr[i * 3]) > bound) velocities[i].x *= -1;
-      if (Math.abs(posArr[i * 3 + 1]) > bound) velocities[i].y *= -1;
-      if (Math.abs(posArr[i * 3 + 2]) > bound) velocities[i].z *= -1;
+    // Streams
+    const sArr = streamGeo.attributes.position.array;
+    for(let i=0; i<streamCount; i++) {
+      sArr[i*3+1] -= 0.2; // Move down
+      if(sArr[i*3+1] < -spread/2) sArr[i*3+1] = spread/2;
     }
-    particleGeometry.attributes.position.needsUpdate = true;
+    streamGeo.attributes.position.needsUpdate = true;
 
-    // Connection lines (every 3 frames for perf)
-    if (frame % 3 === 0) {
-      const linePositions = [];
-      const sampleSize = 300;
-      for (let i = 0; i < sampleSize; i++) {
-        for (let j = i + 1; j < sampleSize; j++) {
-          const dx = posArr[i * 3] - posArr[j * 3];
-          const dy = posArr[i * 3 + 1] - posArr[j * 3 + 1];
-          const dz = posArr[i * 3 + 2] - posArr[j * 3 + 2];
-          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-          if (dist < maxConnectionDist) {
-            linePositions.push(posArr[i * 3], posArr[i * 3 + 1], posArr[i * 3 + 2]);
-            linePositions.push(posArr[j * 3], posArr[j * 3 + 1], posArr[j * 3 + 2]);
-          }
-        }
-      }
-      linesGeometry.dispose();
-      linesGeometry = new THREE.BufferGeometry();
-      if (linePositions.length > 0) {
-        linesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-      }
-      lines.geometry = linesGeometry;
-    }
-
-    // Core rotation
-    core.rotation.x += 0.003;
-    core.rotation.y += 0.005;
-    coreInner.rotation.x -= 0.004;
-    coreInner.rotation.y -= 0.006;
-
-    // Core pulse
-    const pulse = 1 + Math.sin(frame * 0.02) * 0.1;
-    core.scale.set(pulse, pulse, pulse);
-    coreInner.scale.set(pulse * 0.95, pulse * 0.95, pulse * 0.95);
-
-    // Ring rotations
-    ring.rotation.z += 0.002;
-    ring2.rotation.z -= 0.003;
-    ring2.rotation.x += 0.001;
-
-    // Mouse parallax
-    particles.rotation.y = mouse.x * 0.15;
-    particles.rotation.x = mouse.y * 0.1;
-    core.position.x = mouse.x * 2;
-    core.position.y = mouse.y * 2;
-
+    updateHUD();
     renderer.render(scene, camera);
   }
 
+  // Staggered boot-up
+  gsap.from(coreGroup.scale, { x: 0, y: 0, z: 0, duration: 2, ease: 'expo.out' });
   animate();
 }
 
