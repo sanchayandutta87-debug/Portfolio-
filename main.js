@@ -101,71 +101,81 @@ function initThreeScene() {
   const coreGroup = new THREE.Group();
   scene.add(coreGroup);
 
-  // 1. Refined Minimalist Core (Holographic Point Sphere)
-  const coreGeometry = new THREE.SphereGeometry(6, 64, 64);
-  const coreMaterial = new THREE.PointsMaterial({
-    size: 0.05,
-    color: 0x00f0ff,
-    transparent: true,
-    opacity: 0.4,
-    blending: THREE.AdditiveBlending
+  // 1. Robotic Core Cube (Solid & Reflective)
+  const cubeGeometry = new THREE.BoxGeometry(12, 12, 12);
+  const cubeMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x0a0a20,
+    metalness: 0.9,
+    roughness: 0.1,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.1,
+    emissive: 0x00f0ff,
+    emissiveIntensity: 0.05
   });
-  const pointSphere = new THREE.Points(coreGeometry, coreMaterial);
-  coreGroup.add(pointSphere);
+  const mainCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  coreGroup.add(mainCube);
 
-  const outerFrame = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(10, 1),
-    new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.05 })
-  );
-  coreGroup.add(outerFrame);
+  // 2. Mechanical Plates (Robotic Graphics)
+  const plateGroup = new THREE.Group();
+  coreGroup.add(plateGroup);
 
-  // 2. HUD Rings (Minimalist)
-  const createRing = (radius, color, opacity, rotationSpeed) => {
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(radius, 0.02, 16, 100),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity })
+  const createPlate = (x, y, z, rx, ry) => {
+    const plate = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 8, 1),
+      new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 1, roughness: 0.2, transparent: true, opacity: 0.8 })
     );
-    ring.userData.rotationSpeed = rotationSpeed;
-    coreGroup.add(ring);
-    return ring;
+    plate.position.set(x, y, z);
+    plate.rotation.set(rx, ry, 0);
+    plateGroup.add(plate);
+    return plate;
   };
 
-  const r1 = createRing(14, 0x00f0ff, 0.15, 0.002);
-  const r2 = createRing(16, 0x8b5cf6, 0.1, -0.003);
-  r1.rotation.x = Math.PI / 2;
-  r2.rotation.y = Math.PI / 4;
+  const plates = [
+    createPlate(0, 0, 10, 0, 0),
+    createPlate(0, 0, -10, 0, 0),
+    createPlate(10, 0, 0, 0, Math.PI/2),
+    createPlate(-10, 0, 0, 0, Math.PI/2),
+    createPlate(0, 10, 0, Math.PI/2, 0),
+    createPlate(0, -10, 0, Math.PI/2, 0)
+  ];
 
-  // 3. Circuit Mesh (Minimalist Points)
-  const particleCount = 1000;
+  // 3. Studio Lighting
+  const light1 = new THREE.PointLight(0x00f0ff, 500);
+  light1.position.set(20, 20, 40);
+  scene.add(light1);
+
+  const light2 = new THREE.PointLight(0x8b5cf6, 400);
+  light2.position.set(-20, -20, 40);
+  scene.add(light2);
+
+  const cursorLight = new THREE.PointLight(0xffffff, 200);
+  scene.add(cursorLight);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+  scene.add(ambientLight);
+
+  // 4. Circuit Mesh (Refined)
+  const particleCount = 1200;
   const positions = new Float32Array(particleCount * 3);
-  const spread = 150;
-
+  const spread = 200;
   for (let i = 0; i < particleCount; i++) {
     positions[i * 3] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 1] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
   }
-
   const particleGeometry = new THREE.BufferGeometry();
   particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particleMaterial = new THREE.PointsMaterial({
-    size: 0.15,
-    color: 0x00f0ff,
-    transparent: true,
-    opacity: 0.3,
-    blending: THREE.AdditiveBlending
-  });
+  const particleMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x00f0ff, transparent: true, opacity: 0.2 });
   const particles = new THREE.Points(particleGeometry, particleMaterial);
   scene.add(particles);
 
   // ── Widgets Parallax Logic ──
   const widgets = document.querySelectorAll('.floating-widget');
-  
   function updateWidgets() {
     widgets.forEach(widget => {
       const depth = parseFloat(widget.dataset.parallax) || 0.05;
-      const moveX = mouse.x * depth * 50;
-      const moveY = mouse.y * depth * 50;
+      const moveX = mouse.x * depth * 60;
+      const moveY = mouse.y * depth * 60;
       widget.style.transform = `translate(${moveX}px, ${moveY}px)`;
     });
   }
@@ -176,6 +186,8 @@ function initThreeScene() {
   window.addEventListener('mousemove', (e) => {
     targetMouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
     targetMouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+    // Direct light follow
+    cursorLight.position.set(targetMouse.x * 50, targetMouse.y * 50, 30);
   });
 
   window.addEventListener('resize', () => {
@@ -205,24 +217,24 @@ function initThreeScene() {
     mouse.y += (targetMouse.y - mouse.y) * 0.05;
 
     // Core Animations
-    coreGroup.rotation.y += 0.002;
-    pointSphere.rotation.z += 0.005;
-    outerFrame.rotation.x += 0.001;
+    coreGroup.rotation.y += 0.003;
+    coreGroup.rotation.x += 0.001;
+    plateGroup.rotation.y -= 0.005;
     
-    r1.rotation.z += r1.userData.rotationSpeed;
-    r2.rotation.z += r2.userData.rotationSpeed;
-    
-    // Core Pulse
-    const pulse = 1 + Math.sin(frame * 0.03) * 0.05;
-    pointSphere.scale.set(pulse, pulse, pulse);
+    // Orbital Plate "Breathing"
+    plates.forEach((plate, i) => {
+      const offset = Math.sin(frame * 0.02 + i) * 1.5;
+      const dir = plate.position.clone().normalize();
+      plate.position.copy(dir.multiplyScalar(10 + offset));
+    });
     
     // Parallax
-    coreGroup.position.x = mouse.x * 3;
-    coreGroup.position.y = mouse.y * 3;
-    particles.rotation.y = mouse.x * 0.05;
+    coreGroup.position.x = mouse.x * 4;
+    coreGroup.position.y = mouse.y * 4;
+    particles.rotation.y = mouse.x * 0.03;
 
     updateHUD();
-    updateWidgets(); // Apply parallax to HTML items
+    updateWidgets();
     renderer.render(scene, camera);
   }
 
