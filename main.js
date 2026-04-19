@@ -101,28 +101,73 @@ function initThreeScene() {
   const coreGroup = new THREE.Group();
   scene.add(coreGroup);
 
-  // 1. Robotic Core Cube (Solid & Reflective)
-  const cubeGeometry = new THREE.BoxGeometry(12, 12, 12);
+  // 1. Digital Veins (Flowing Data Splines)
+  const splines = [];
+  const splineCount = 40;
+  const veinGroup = new THREE.Group();
+  scene.add(veinGroup);
+
+  for (let i = 0; i < splineCount; i++) {
+    const points = [];
+    const xBase = (Math.random() - 0.5) * 150;
+    const yBase = (Math.random() - 0.5) * 150;
+    
+    for (let j = 0; j < 5; j++) {
+      points.push(new THREE.Vector3(
+        xBase + (Math.random() - 0.5) * 40,
+        yBase + j * 40 - 80,
+        (Math.random() - 0.5) * 40
+      ));
+    }
+    
+    const curve = new THREE.CatmullRomCurve3(points);
+    splines.push(curve);
+
+    // Spline visualization (optional/faint)
+    const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50));
+    const material = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.05 });
+    const line = new THREE.Line(geometry, material);
+    veinGroup.add(line);
+  }
+
+  // Vein Particles
+  const veinParticleCount = 200;
+  const veinParticles = [];
+  const vpGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+  const vpMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 });
+
+  for (let i = 0; i < veinParticleCount; i++) {
+    const p = new THREE.Mesh(vpGeometry, vpMaterial);
+    p.userData = {
+      spline: splines[Math.floor(Math.random() * splines.length)],
+      t: Math.random(),
+      speed: 0.0005 + Math.random() * 0.001
+    };
+    veinGroup.add(p);
+    veinParticles.push(p);
+  }
+
+  // 2. Main Kinetic Nucleus
+  const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
   const cubeMaterial = new THREE.MeshPhysicalMaterial({
     color: 0x0a0a20,
-    metalness: 0.9,
-    roughness: 0.1,
+    metalness: 0.95,
+    roughness: 0.05,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.1,
     emissive: 0x00f0ff,
-    emissiveIntensity: 0.05
+    emissiveIntensity: 0.1
   });
   const mainCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
   coreGroup.add(mainCube);
 
-  // 2. Mechanical Plates (Robotic Graphics)
+  // Mechanical Panels (Kinetic)
   const plateGroup = new THREE.Group();
   coreGroup.add(plateGroup);
 
   const createPlate = (x, y, z, rx, ry) => {
     const plate = new THREE.Mesh(
-      new THREE.BoxGeometry(8, 8, 1),
-      new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 1, roughness: 0.2, transparent: true, opacity: 0.8 })
+      new THREE.BoxGeometry(7, 7, 0.5),
+      new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 1, roughness: 0.1, transparent: true, opacity: 0.9 })
     );
     plate.position.set(x, y, z);
     plate.rotation.set(rx, ry, 0);
@@ -131,63 +176,56 @@ function initThreeScene() {
   };
 
   const plates = [
-    createPlate(0, 0, 10, 0, 0),
-    createPlate(0, 0, -10, 0, 0),
-    createPlate(10, 0, 0, 0, Math.PI/2),
-    createPlate(-10, 0, 0, 0, Math.PI/2),
-    createPlate(0, 10, 0, Math.PI/2, 0),
-    createPlate(0, -10, 0, Math.PI/2, 0)
+    createPlate(0, 0, 8, 0, 0),
+    createPlate(0, 0, -8, 0, 0),
+    createPlate(8, 0, 0, 0, Math.PI/2),
+    createPlate(-8, 0, 0, 0, Math.PI/2),
+    createPlate(0, 8, 0, Math.PI/2, 0),
+    createPlate(0, -8, 0, Math.PI/2, 0)
   ];
 
-  // 3. Studio Lighting
-  const light1 = new THREE.PointLight(0x00f0ff, 500);
-  light1.position.set(20, 20, 40);
+  // 3. Kinetic Unfolding (GSAP ScrollTrigger)
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.to(plateGroup.scale, {
+    x: 2.5, y: 2.5, z: 2.5,
+    scrollTrigger: {
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1
+    }
+  });
+
+  gsap.to(coreGroup.rotation, {
+    y: Math.PI * 4,
+    scrollTrigger: {
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1
+    }
+  });
+
+  // 4. Lights & Ambient
+  const light1 = new THREE.PointLight(0x00f0ff, 600);
+  light1.position.set(30, 30, 50);
   scene.add(light1);
 
-  const light2 = new THREE.PointLight(0x8b5cf6, 400);
-  light2.position.set(-20, -20, 40);
+  const light2 = new THREE.PointLight(0x8b5cf6, 500);
+  light2.position.set(-30, -30, 50);
   scene.add(light2);
 
-  const cursorLight = new THREE.PointLight(0xffffff, 200);
+  const cursorLight = new THREE.PointLight(0xffffff, 150);
   scene.add(cursorLight);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
-  scene.add(ambientLight);
-
-  // 4. Circuit Mesh (Refined)
-  const particleCount = 1200;
-  const positions = new Float32Array(particleCount * 3);
-  const spread = 200;
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * spread;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * spread;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
-  }
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particleMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x00f0ff, transparent: true, opacity: 0.2 });
-  const particles = new THREE.Points(particleGeometry, particleMaterial);
-  scene.add(particles);
-
-  // ── Widgets Parallax Logic ──
-  const widgets = document.querySelectorAll('.floating-widget');
-  function updateWidgets() {
-    widgets.forEach(widget => {
-      const depth = parseFloat(widget.dataset.parallax) || 0.05;
-      const moveX = mouse.x * depth * 60;
-      const moveY = mouse.y * depth * 60;
-      widget.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    });
-  }
-
-  // ── Motion Tracking ──
+  // ── Motion Logic ──
   const mouse = { x: 0, y: 0 };
   const targetMouse = { x: 0, y: 0 };
   window.addEventListener('mousemove', (e) => {
     targetMouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
     targetMouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
-    // Direct light follow
-    cursorLight.position.set(targetMouse.x * 50, targetMouse.y * 50, 30);
+    cursorLight.position.set(targetMouse.x * 40, targetMouse.y * 40, 40);
   });
 
   window.addEventListener('resize', () => {
@@ -196,45 +234,29 @@ function initThreeScene() {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // ── Animate ──
-  let frame = 0;
-  const tickerLeft = document.getElementById('ticker-left');
-  const tickerRight = document.getElementById('ticker-right');
-
-  function updateHUD() {
-    if (frame % 30 === 0) {
-      const hex = Math.floor(Math.random() * 0xffffff).toString(16).toUpperCase();
-      tickerLeft.textContent = `SYSTEM: ONLINE // ADDR: 0x${hex}`;
-      tickerRight.textContent = `SYNC: ${90 + Math.floor(Math.random() * 10)}% // CORE: ${Math.floor(Math.random() * 100)}%`;
-    }
-  }
-
   function animate() {
     requestAnimationFrame(animate);
-    frame++;
-
+    
     mouse.x += (targetMouse.x - mouse.x) * 0.05;
     mouse.y += (targetMouse.y - mouse.y) * 0.05;
 
-    // Core Animations
-    coreGroup.rotation.y += 0.003;
-    coreGroup.rotation.x += 0.001;
-    plateGroup.rotation.y -= 0.005;
-    
-    // Orbital Plate "Breathing"
-    plates.forEach((plate, i) => {
-      const offset = Math.sin(frame * 0.02 + i) * 1.5;
-      const dir = plate.position.clone().normalize();
-      plate.position.copy(dir.multiplyScalar(10 + offset));
+    // Pulse Vein Particles
+    veinParticles.forEach(p => {
+      p.userData.t += p.userData.speed;
+      if (p.userData.t > 1) p.userData.t = 0;
+      const pos = p.userData.spline.getPointAt(p.userData.t);
+      p.position.copy(pos);
     });
-    
-    // Parallax
-    coreGroup.position.x = mouse.x * 4;
-    coreGroup.position.y = mouse.y * 4;
-    particles.rotation.y = mouse.x * 0.03;
 
-    updateHUD();
-    updateWidgets();
+    // Sub-rotations
+    mainCube.rotation.x += 0.005;
+    mainCube.rotation.y += 0.005;
+    plateGroup.rotation.z += 0.002;
+    
+    // Mouse Parallax
+    veinGroup.rotation.x = mouse.y * 0.05;
+    veinGroup.rotation.y = mouse.x * 0.05;
+    
     renderer.render(scene, camera);
   }
 

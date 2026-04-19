@@ -416,13 +416,14 @@ img {
   overflow: hidden;
 }
 
-.hero__canvas {
-  position: absolute;
+.global-canvas {
+  position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.hero__canvas canvas {
+.global-canvas canvas {
   width: 100% !important;
   height: 100% !important;
 }
@@ -695,8 +696,14 @@ img {
 .section {
   padding: var(--section-padding) clamp(1.5rem, 5vw, 4rem);
   max-width: var(--container-width);
-  margin: 0 auto;
+  margin: 4rem auto;
   position: relative;
+  background: rgba(10, 10, 26, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
 .section__header {
