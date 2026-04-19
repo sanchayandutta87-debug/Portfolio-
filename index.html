@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanchayan — Frontend & Full-Stack Developer</title>
+  <meta name="description" content="Portfolio of Sanchayan — a Frontend & Full-Stack Developer with 5+ years of experience building modern, high-performance web applications. Available for freelance projects." />
+  <meta name="keywords" content="frontend developer, full-stack developer, freelancer, web developer, portfolio, react, node.js" />
+  <meta name="author" content="Sanchayan" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js" defer></script>
+
+  <!-- SplitType -->
+  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js" defer></script>
+
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- ═══════════════════ CUSTOM CURSOR ═══════════════════ -->
+  <div id="cursor-dot" class="cursor-dot"></div>
+  <div id="cursor-ring" class="cursor-ring"></div>
+
+  <!-- ═══════════════════ PRELOADER ═══════════════════ -->
+  <div id="preloader" class="preloader">
+    <div class="preloader__inner">
+      <div class="preloader__glitch" data-text="SANCHAYAN">SANCHAYAN</div>
+      <div class="preloader__bar-container">
+        <div id="preloader-bar" class="preloader__bar"></div>
+      </div>
+      <div id="preloader-percent" class="preloader__percent">0%</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ NAVIGATION ═══════════════════ -->
+  <nav id="navbar" class="navbar">
+    <a href="#hero" class="navbar__logo">
+      <span class="logo-bracket">&lt;</span>S<span class="logo-dot">.</span><span class="logo-bracket">/&gt;</span>
+    </a>
+    <div class="navbar__links">
+      <a href="#about" class="nav-link" data-magnetic>About</a>
+      <a href="#skills" class="nav-link" data-magnetic>Skills</a>
+      <a href="#projects" class="nav-link" data-magnetic>Projects</a>
+      <a href="#experience" class="nav-link" data-magnetic>Experience</a>
+      <a href="#contact" class="nav-link" data-magnetic>Contact</a>
+    </div>
+    <button id="nav-toggle" class="navbar__toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="#about" class="mobile-menu__link">About</a>
+    <a href="#skills" class="mobile-menu__link">Skills</a>
+    <a href="#projects" class="mobile-menu__link">Projects</a>
+    <a href="#experience" class="mobile-menu__link">Experience</a>
+    <a href="#contact" class="mobile-menu__link">Contact</a>
+  </div>
+
+  <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+  <main id="smooth-wrapper">
+
+    <!-- ─── HERO ─── -->
+    <section id="hero" class="hero">
+      <div id="three-canvas" class="hero__canvas"></div>
+      <div class="hero__content">
+        <div class="hero__badge">
+          <span class="badge-dot"></span>
+          Available for Freelance
+        </div>
+        <h1 class="hero__name" data-split>SANCHAYAN</h1>
+        <div class="hero__tagline-wrapper">
+          <p class="hero__tagline">
+            <span class="tagline-line" data-split>Frontend & Full-Stack Developer</span>
+          </p>
+          <p class="hero__sub-tagline">
+            <span class="tagline-line" data-split>Crafting digital experiences with code & creativity</span>
+          </p>
+        </div>
+        <div class="hero__cta">
+          <a href="#projects" class="btn btn--primary" data-magnetic>
+            <span>View My Work</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+          <a href="#contact" class="btn btn--outline" data-magnetic>
+            <span>Get In Touch</span>
+          </a>
+        </div>
+        <div class="hero__stats-row">
+          <div class="hero__stat">
+            <span class="stat-number" data-count="5">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">Years Exp.</span>
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="stat-number" data-count="5">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">Projects</span>
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="stat-number" data-count="20">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">Clients</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero__scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ═══ MARQUEE ═══ -->
+    <div class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <span>REACT</span><span class="marquee-dot">◆</span>
+          <span>NEXT.JS</span><span class="marquee-dot">◆</span>
+          <span>NODE.JS</span><span class="marquee-dot">◆</span>
+          <span>TYPESCRIPT</span><span class="marquee-dot">◆</span>
+          <span>MONGODB</span><span class="marquee-dot">◆</span>
+          <span>POSTGRESQL</span><span class="marquee-dot">◆</span>
+          <span>FIGMA</span><span class="marquee-dot">◆</span>
+          <span>DOCKER</span><span class="marquee-dot">◆</span>
+          <span>GIT</span><span class="marquee-dot">◆</span>
+          <span>JAVASCRIPT</span><span class="marquee-dot">◆</span>
+          <span>HTML & CSS</span><span class="marquee-dot">◆</span>
+          <span>VUE.JS</span><span class="marquee-dot">◆</span>
+          <span>REACT</span><span class="marquee-dot">◆</span>
+          <span>NEXT.JS</span><span class="marquee-dot">◆</span>
+          <span>NODE.JS</span><span class="marquee-dot">◆</span>
+          <span>TYPESCRIPT</span><span class="marquee-dot">◆</span>
+          <span>MONGODB</span><span class="marquee-dot">◆</span>
+          <span>POSTGRESQL</span><span class="marquee-dot">◆</span>
+          <span>FIGMA</span><span class="marquee-dot">◆</span>
+          <span>DOCKER</span><span class="marquee-dot">◆</span>
+          <span>GIT</span><span class="marquee-dot">◆</span>
+          <span>JAVASCRIPT</span><span class="marquee-dot">◆</span>
+          <span>HTML & CSS</span><span class="marquee-dot">◆</span>
+          <span>VUE.JS</span><span class="marquee-dot">◆</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ABOUT ─── -->
+    <section id="about" class="about section">
+      <div class="section__header">
+        <span class="section__tag">// 01</span>
+        <h2 class="section__title" data-split>About Me</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="about__grid">
+        <div class="about__card about__card--main glass-card">
+          <div class="about__profile-ring">
+            <div class="ring-rotate"></div>
+            <div class="about__avatar">
+              <span class="avatar-initials">S</span>
+            </div>
+          </div>
+          <div class="about__bio">
+            <h3>Hello, I'm <span class="text-gradient">Sanchayan</span></h3>
+            <p>A passionate Frontend & Full-Stack Developer with over <strong>5 years</strong> of experience building performant, scalable web applications. I thrive at the intersection of design and engineering — turning complex ideas into elegant, user-centric digital experiences.</p>
+            <p>As a <strong>Freelancer</strong>, I've partnered with startups and businesses to deliver production-ready solutions, from interactive dashboards to full-scale SaaS platforms. My toolkit spans the entire modern web stack.</p>
+          </div>
+        </div>
+        <div class="about__card about__card--stat glass-card" data-tilt>
+          <span class="stat-icon">🚀</span>
+          <span class="stat-big" data-count="5">0</span>
+          <span class="stat-desc">Years of Experience</span>
+        </div>
+        <div class="about__card about__card--stat glass-card" data-tilt>
+          <span class="stat-icon">📦</span>
+          <span class="stat-big" data-count="5">0</span>
+          <span class="stat-desc">Projects Delivered</span>
+        </div>
+        <div class="about__card about__card--stat glass-card" data-tilt>
+          <span class="stat-icon">💼</span>
+          <span class="stat-big" data-count="20">0</span>
+          <span class="stat-desc">Happy Clients</span>
+        </div>
+        <div class="about__card about__card--stat glass-card" data-tilt>
+          <span class="stat-icon">⚡</span>
+          <span class="stat-big">∞</span>
+          <span class="stat-desc">Passion for Code</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SKILLS ─── -->
+    <section id="skills" class="skills section">
+      <div class="section__header">
+        <span class="section__tag">// 02</span>
+        <h2 class="section__title" data-split>Skills & Tech</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="skills__categories">
+        <!-- Frontend -->
+        <div class="skill-category">
+          <h3 class="skill-category__title">
+            <span class="cat-icon">🎨</span> Frontend
+          </h3>
+          <div class="skill-category__grid">
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="95"/></svg></div>
+              <span class="skill-card__name">React</span>
+              <span class="skill-card__level">95%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="90"/></svg></div>
+              <span class="skill-card__name">Next.js</span>
+              <span class="skill-card__level">90%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="88"/></svg></div>
+              <span class="skill-card__name">Vue.js</span>
+              <span class="skill-card__level">88%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="97"/></svg></div>
+              <span class="skill-card__name">JavaScript</span>
+              <span class="skill-card__level">97%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="92"/></svg></div>
+              <span class="skill-card__name">TypeScript</span>
+              <span class="skill-card__level">92%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="96"/></svg></div>
+              <span class="skill-card__name">HTML/CSS</span>
+              <span class="skill-card__level">96%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Backend -->
+        <div class="skill-category">
+          <h3 class="skill-category__title">
+            <span class="cat-icon">⚙️</span> Backend
+          </h3>
+          <div class="skill-category__grid">
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="90"/></svg></div>
+              <span class="skill-card__name">Node.js</span>
+              <span class="skill-card__level">90%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="85"/></svg></div>
+              <span class="skill-card__name">Express</span>
+              <span class="skill-card__level">85%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="82"/></svg></div>
+              <span class="skill-card__name">MongoDB</span>
+              <span class="skill-card__level">82%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="78"/></svg></div>
+              <span class="skill-card__name">PostgreSQL</span>
+              <span class="skill-card__level">78%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Tools -->
+        <div class="skill-category">
+          <h3 class="skill-category__title">
+            <span class="cat-icon">🛠️</span> Tools & DevOps
+          </h3>
+          <div class="skill-category__grid">
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="92"/></svg></div>
+              <span class="skill-card__name">Git</span>
+              <span class="skill-card__level">92%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="75"/></svg></div>
+              <span class="skill-card__name">Docker</span>
+              <span class="skill-card__level">75%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="88"/></svg></div>
+              <span class="skill-card__name">Figma</span>
+              <span class="skill-card__level">88%</span>
+            </div>
+            <div class="skill-card glass-card" data-tilt>
+              <div class="skill-card__ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="ring-bg"/><circle cx="60" cy="60" r="54" class="ring-fill" data-percent="95"/></svg></div>
+              <span class="skill-card__name">VS Code</span>
+              <span class="skill-card__level">95%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PROJECTS ─── -->
+    <section id="projects" class="projects section">
+      <div class="section__header">
+        <span class="section__tag">// 03</span>
+        <h2 class="section__title" data-split>Featured Work</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="projects__showcase">
+        <!-- Project 1 -->
+        <div class="project-card glass-card" data-tilt>
+          <div class="project-card__preview">
+            <div class="project-card__img" style="--gradient: linear-gradient(135deg, #00f0ff33, #8b5cf633);">
+              <div class="project-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg>
+              </div>
+            </div>
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--small" data-magnetic>Live Demo ↗</a>
+              <a href="#" class="btn btn--small btn--ghost" data-magnetic>Source Code</a>
+            </div>
+          </div>
+          <div class="project-card__info">
+            <h3 class="project-card__title">StreamFlow Dashboard</h3>
+            <p class="project-card__desc">Real-time analytics dashboard with live data visualization, interactive charts, and responsive dark-themed interface.</p>
+            <div class="project-card__tags">
+              <span>React</span><span>Node.js</span><span>Socket.io</span><span>Chart.js</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 2 -->
+        <div class="project-card glass-card" data-tilt>
+          <div class="project-card__preview">
+            <div class="project-card__img" style="--gradient: linear-gradient(135deg, #8b5cf633, #f43f5e33);">
+              <div class="project-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+            </div>
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--small" data-magnetic>Live Demo ↗</a>
+              <a href="#" class="btn btn--small btn--ghost" data-magnetic>Source Code</a>
+            </div>
+          </div>
+          <div class="project-card__info">
+            <h3 class="project-card__title">NexCommerce Platform</h3>
+            <p class="project-card__desc">Full-stack e-commerce platform with inventory management, payment integration, and admin dashboard.</p>
+            <div class="project-card__tags">
+              <span>Next.js</span><span>MongoDB</span><span>Stripe</span><span>Tailwind</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 3 -->
+        <div class="project-card glass-card" data-tilt>
+          <div class="project-card__preview">
+            <div class="project-card__img" style="--gradient: linear-gradient(135deg, #10b98133, #00f0ff33);">
+              <div class="project-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </div>
+            </div>
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--small" data-magnetic>Live Demo ↗</a>
+              <a href="#" class="btn btn--small btn--ghost" data-magnetic>Source Code</a>
+            </div>
+          </div>
+          <div class="project-card__info">
+            <h3 class="project-card__title">ChatSphere</h3>
+            <p class="project-card__desc">Real-time messaging application with end-to-end encryption, file sharing, and video calling integration.</p>
+            <div class="project-card__tags">
+              <span>React</span><span>Firebase</span><span>WebRTC</span><span>Node.js</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 4 -->
+        <div class="project-card glass-card" data-tilt>
+          <div class="project-card__preview">
+            <div class="project-card__img" style="--gradient: linear-gradient(135deg, #f59e0b33, #ef444433);">
+              <div class="project-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              </div>
+            </div>
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--small" data-magnetic>Live Demo ↗</a>
+              <a href="#" class="btn btn--small btn--ghost" data-magnetic>Source Code</a>
+            </div>
+          </div>
+          <div class="project-card__info">
+            <h3 class="project-card__title">DevBlog CMS</h3>
+            <p class="project-card__desc">A headless CMS and blogging engine with markdown editor, SEO tools, and automated deployment pipeline.</p>
+            <div class="project-card__tags">
+              <span>Vue.js</span><span>Express</span><span>PostgreSQL</span><span>Docker</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project 5 -->
+        <div class="project-card glass-card" data-tilt>
+          <div class="project-card__preview">
+            <div class="project-card__img" style="--gradient: linear-gradient(135deg, #6366f133, #ec489933);">
+              <div class="project-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.5"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+              </div>
+            </div>
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--small" data-magnetic>Live Demo ↗</a>
+              <a href="#" class="btn btn--small btn--ghost" data-magnetic>Source Code</a>
+            </div>
+          </div>
+          <div class="project-card__info">
+            <h3 class="project-card__title">TaskForge</h3>
+            <p class="project-card__desc">Workforce management tool with Kanban boards, time tracking, team analytics, and calendar scheduling.</p>
+            <div class="project-card__tags">
+              <span>React</span><span>TypeScript</span><span>Node.js</span><span>MongoDB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── EXPERIENCE ─── -->
+    <section id="experience" class="experience section">
+      <div class="section__header">
+        <span class="section__tag">// 04</span>
+        <h2 class="section__title" data-split>Experience</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="experience__timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-year">2024 – Present</span>
+            <h3>Senior Frontend Developer</h3>
+            <p class="timeline-company">Freelance · Remote</p>
+            <p>Leading full-stack projects for international clients. Architecting scalable web applications with React, Next.js, and Node.js. Delivering pixel-perfect, performance-optimized solutions.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-year">2022 – 2024</span>
+            <h3>Full-Stack Developer</h3>
+            <p class="timeline-company">Tech Startup · Hybrid</p>
+            <p>Built and maintained multiple production applications. Implemented CI/CD pipelines, database architecture, and real-time features. Mentored junior developers on best practices.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-year">2021 – 2022</span>
+            <h3>Frontend Developer</h3>
+            <p class="timeline-company">Digital Agency · On-site</p>
+            <p>Developed responsive interfaces for high-traffic web applications. Collaborated with design teams to create interactive prototypes and pixel-perfect implementations.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <span class="timeline-year">2020 – 2021</span>
+            <h3>Junior Web Developer</h3>
+            <p class="timeline-company">Freelance · Remote</p>
+            <p>Started freelance journey building websites and web apps for local businesses. Gained deep expertise in JavaScript, React, and modern CSS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CONTACT ─── -->
+    <section id="contact" class="contact section">
+      <div class="section__header">
+        <span class="section__tag">// 05</span>
+        <h2 class="section__title" data-split>Get In Touch</h2>
+        <div class="section__line"></div>
+      </div>
+      <div class="contact__grid">
+        <div class="contact__info glass-card">
+          <h3>Let's work <span class="text-gradient">together</span></h3>
+          <p>Have a project in mind? I'm always open to discussing new opportunities, creative ideas, and ways to bring your vision to life.</p>
+          <div class="contact__details">
+            <div class="contact-detail">
+              <span class="contact-detail__icon">📧</span>
+              <span>hello@sanchayan.dev</span>
+            </div>
+            <div class="contact-detail">
+              <span class="contact-detail__icon">📍</span>
+              <span>Available Worldwide · Remote</span>
+            </div>
+          </div>
+          <div class="contact__socials">
+            <a href="#" class="social-link" data-magnetic aria-label="GitHub">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a href="#" class="social-link" data-magnetic aria-label="LinkedIn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="#" class="social-link" data-magnetic aria-label="Twitter">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+        <form id="contact-form" class="contact__form glass-card">
+          <div class="form-group">
+            <input type="text" id="contact-name" required placeholder=" " />
+            <label for="contact-name">Your Name</label>
+            <div class="form-line"></div>
+          </div>
+          <div class="form-group">
+            <input type="email" id="contact-email" required placeholder=" " />
+            <label for="contact-email">Your Email</label>
+            <div class="form-line"></div>
+          </div>
+          <div class="form-group">
+            <textarea id="contact-message" rows="5" required placeholder=" "></textarea>
+            <label for="contact-message">Your Message</label>
+            <div class="form-line"></div>
+          </div>
+          <button type="submit" class="btn btn--primary btn--full" data-magnetic>
+            <span>Send Message</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <p class="footer__copy">© 2026 Sanchayan. Crafted with passion & code.</p>
+        <p class="footer__note">Built with <span class="text-gradient">Three.js</span>, <span class="text-gradient">GSAP</span> & <span class="text-gradient">Vanilla JS</span></p>
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
