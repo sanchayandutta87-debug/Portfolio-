@@ -101,70 +101,74 @@ function initThreeScene() {
   const coreGroup = new THREE.Group();
   scene.add(coreGroup);
 
-  // 1. Robotic Core (Nested Gears/Geometries)
-  const innerGeometry = new THREE.IcosahedronGeometry(4, 0);
-  const innerMaterial = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.3 });
-  const innerCore = new THREE.Mesh(innerGeometry, innerMaterial);
-  coreGroup.add(innerCore);
+  // 1. Refined Minimalist Core (Holographic Point Sphere)
+  const coreGeometry = new THREE.SphereGeometry(6, 64, 64);
+  const coreMaterial = new THREE.PointsMaterial({
+    size: 0.05,
+    color: 0x00f0ff,
+    transparent: true,
+    opacity: 0.4,
+    blending: THREE.AdditiveBlending
+  });
+  const pointSphere = new THREE.Points(coreGeometry, coreMaterial);
+  coreGroup.add(pointSphere);
 
-  const outerGeometry = new THREE.OctahedronGeometry(7, 0);
-  const outerMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.1 });
-  const outerCore = new THREE.Mesh(outerGeometry, outerMaterial);
-  coreGroup.add(outerCore);
-
-  // 2. HUD Rings
-  const ring1 = new THREE.Mesh(
-    new THREE.TorusGeometry(10, 0.05, 16, 100),
-    new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.2 })
+  const outerFrame = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(10, 1),
+    new THREE.MeshBasicMaterial({ color: 0x8b5cf6, wireframe: true, transparent: true, opacity: 0.05 })
   );
-  ring1.rotation.x = Math.PI / 2;
-  coreGroup.add(ring1);
+  coreGroup.add(outerFrame);
 
-  const ring2 = new THREE.Mesh(
-    new THREE.TorusGeometry(12, 0.02, 16, 100, Math.PI),
-    new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.3 })
-  );
-  ring2.rotation.y = Math.PI / 4;
-  coreGroup.add(ring2);
+  // 2. HUD Rings (Minimalist)
+  const createRing = (radius, color, opacity, rotationSpeed) => {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, 0.02, 16, 100),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity })
+    );
+    ring.userData.rotationSpeed = rotationSpeed;
+    coreGroup.add(ring);
+    return ring;
+  };
 
-  // 3. Circuit Mesh Particles
-  const particleCount = 1500;
+  const r1 = createRing(14, 0x00f0ff, 0.15, 0.002);
+  const r2 = createRing(16, 0x8b5cf6, 0.1, -0.003);
+  r1.rotation.x = Math.PI / 2;
+  r2.rotation.y = Math.PI / 4;
+
+  // 3. Circuit Mesh (Minimalist Points)
+  const particleCount = 1000;
   const positions = new Float32Array(particleCount * 3);
-  const velocities = [];
-  const spread = 120;
+  const spread = 150;
 
   for (let i = 0; i < particleCount; i++) {
     positions[i * 3] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 1] = (Math.random() - 0.5) * spread;
     positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
-    velocities.push({
-      x: (Math.random() - 0.5) * 0.005,
-      y: (Math.random() - 0.5) * 0.005,
-      z: (Math.random() - 0.5) * 0.005,
-    });
   }
 
   const particleGeometry = new THREE.BufferGeometry();
   particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const particleMaterial = new THREE.PointsMaterial({
-    size: 0.2,
+    size: 0.15,
     color: 0x00f0ff,
     transparent: true,
-    opacity: 0.6,
+    opacity: 0.3,
     blending: THREE.AdditiveBlending
   });
   const particles = new THREE.Points(particleGeometry, particleMaterial);
   scene.add(particles);
 
-  // 4. Data Streams (Fast moving particles)
-  const streamCount = 200;
-  const streamPos = new Float32Array(streamCount * 3);
-  for(let i=0; i<streamCount*3; i++) streamPos[i] = (Math.random() - 0.5) * spread;
-  const streamGeo = new THREE.BufferGeometry();
-  streamGeo.setAttribute('position', new THREE.BufferAttribute(streamPos, 3));
-  const streamMat = new THREE.PointsMaterial({ size: 0.3, color: 0xffffff, transparent: true, opacity: 0.8 });
-  const streams = new THREE.Points(streamGeo, streamMat);
-  scene.add(streams);
+  // ── Widgets Parallax Logic ──
+  const widgets = document.querySelectorAll('.floating-widget');
+  
+  function updateWidgets() {
+    widgets.forEach(widget => {
+      const depth = parseFloat(widget.dataset.parallax) || 0.05;
+      const moveX = mouse.x * depth * 50;
+      const moveY = mouse.y * depth * 50;
+      widget.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+  }
 
   // ── Motion Tracking ──
   const mouse = { x: 0, y: 0 };
@@ -201,29 +205,24 @@ function initThreeScene() {
     mouse.y += (targetMouse.y - mouse.y) * 0.05;
 
     // Core Animations
-    coreGroup.rotation.y += 0.005;
-    coreGroup.rotation.z += 0.002;
-    innerCore.rotation.x -= 0.01;
-    outerCore.rotation.y += 0.008;
+    coreGroup.rotation.y += 0.002;
+    pointSphere.rotation.z += 0.005;
+    outerFrame.rotation.x += 0.001;
     
-    // Pulse effect
-    const hue = 0.5 + Math.sin(frame * 0.02) * 0.1;
-    innerMaterial.opacity = 0.2 + Math.sin(frame * 0.05) * 0.1;
+    r1.rotation.z += r1.userData.rotationSpeed;
+    r2.rotation.z += r2.userData.rotationSpeed;
+    
+    // Core Pulse
+    const pulse = 1 + Math.sin(frame * 0.03) * 0.05;
+    pointSphere.scale.set(pulse, pulse, pulse);
     
     // Parallax
-    coreGroup.position.x = mouse.x * 5;
-    coreGroup.position.y = mouse.y * 5;
-    particles.rotation.y = mouse.x * 0.1;
-
-    // Streams
-    const sArr = streamGeo.attributes.position.array;
-    for(let i=0; i<streamCount; i++) {
-      sArr[i*3+1] -= 0.2; // Move down
-      if(sArr[i*3+1] < -spread/2) sArr[i*3+1] = spread/2;
-    }
-    streamGeo.attributes.position.needsUpdate = true;
+    coreGroup.position.x = mouse.x * 3;
+    coreGroup.position.y = mouse.y * 3;
+    particles.rotation.y = mouse.x * 0.05;
 
     updateHUD();
+    updateWidgets(); // Apply parallax to HTML items
     renderer.render(scene, camera);
   }
 

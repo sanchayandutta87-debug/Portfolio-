@@ -24,6 +24,10 @@
 </head>
 <body>
   <!-- ═══════════════════ CINEMATIC OVERLAYS ═══════════════════ -->
+  <div class="bg-glow">
+    <div class="glow-aura aura-1"></div>
+    <div class="glow-aura aura-2"></div>
+  </div>
   <div class="scanlines"></div>
   <div class="hud-overlay">
     <div class="hud-corner hud-corner--tl"></div>
@@ -81,6 +85,27 @@
     <!-- ─── HERO ─── -->
     <section id="hero" class="hero">
       <div id="three-canvas" class="hero__canvas"></div>
+      
+      <!-- Floating Background Widgets -->
+      <div class="hero__bg-widgets">
+        <div class="floating-widget widget--1" data-parallax="0.05">
+          <span class="widget__title">IDENT:01</span>
+          <div class="widget__content">USER // SANCHAYAN<br>PERM // FULL_STACK</div>
+        </div>
+        <div class="floating-widget widget--2" data-parallax="0.03">
+          <span class="widget__title">CODE_BASE</span>
+          <div class="widget__content widget__code">while(code) {<br>&nbsp;&nbsp;create_magic();<br>}</div>
+        </div>
+        <div class="floating-widget widget--3" data-parallax="0.08">
+          <span class="widget__title">METRICS</span>
+          <div class="widget__content">SYNC // 100%<br>PING // 4MS</div>
+        </div>
+        <div class="floating-widget widget--4" data-parallax="0.04">
+          <span class="widget__title">STATUS</span>
+          <div class="widget__content">AVAILABLE FOR<br>FREELANCING</div>
+        </div>
+      </div>
+
       <div class="hero__content">
         <div class="hero__badge">
           <span class="badge-dot"></span>
