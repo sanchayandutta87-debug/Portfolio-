@@ -556,7 +556,7 @@ function initSkillRings() {
 /* ═══════════════════ COUNTER ANIMATION ═══════════════════ */
 function initCounters() {
   document.querySelectorAll('[data-count]').forEach(el => {
-    const target = parseInt(el.dataset.count);
+    const target = parseFloat(el.dataset.count);
 
     ScrollTrigger.create({
       trigger: el,
@@ -567,7 +567,8 @@ function initCounters() {
           duration: 2,
           ease: 'power3.out',
           onUpdate: function() {
-            el.textContent = Math.floor(this.targets()[0].val);
+            const currentVal = this.targets()[0].val;
+            el.textContent = target % 1 === 0 ? Math.floor(currentVal) : currentVal.toFixed(1);
           }
         });
       },
