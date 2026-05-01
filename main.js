@@ -52,9 +52,7 @@ function initApp() {
   initCustomCursor();
   initNavbar();
   initGSAPAnimations();
-  initSkillRings();
   initCounters();
-  initContactForm();
   initMagneticButtons();
 }
 
@@ -103,71 +101,128 @@ function initThreeScene() {
 
   // 1. Digital Veins (Flowing Data Splines)
   const splines = [];
-  const splineCount = 40;
+  const splineCount = 50;
   const veinGroup = new THREE.Group();
   scene.add(veinGroup);
 
   for (let i = 0; i < splineCount; i++) {
     const points = [];
-    const xBase = (Math.random() - 0.5) * 150;
-    const yBase = (Math.random() - 0.5) * 150;
+    const xBase = (Math.random() - 0.5) * 200;
+    const yBase = (Math.random() - 0.5) * 200;
     
     for (let j = 0; j < 5; j++) {
       points.push(new THREE.Vector3(
-        xBase + (Math.random() - 0.5) * 40,
-        yBase + j * 40 - 80,
-        (Math.random() - 0.5) * 40
+        xBase + (Math.random() - 0.5) * 50,
+        yBase + j * 50 - 100,
+        (Math.random() - 0.5) * 50
       ));
     }
     
     const curve = new THREE.CatmullRomCurve3(points);
     splines.push(curve);
 
-    // Spline visualization (optional/faint)
     const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50));
-    const material = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.05 });
+    const material = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.08 });
     const line = new THREE.Line(geometry, material);
     veinGroup.add(line);
   }
 
   // Vein Particles
-  const veinParticleCount = 200;
+  const veinParticleCount = 300;
   const veinParticles = [];
-  const vpGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-  const vpMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 });
+  const vpGeometry = new THREE.SphereGeometry(0.12, 8, 8);
+  const vpMaterial = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.9 });
 
   for (let i = 0; i < veinParticleCount; i++) {
     const p = new THREE.Mesh(vpGeometry, vpMaterial);
     p.userData = {
       spline: splines[Math.floor(Math.random() * splines.length)],
       t: Math.random(),
-      speed: 0.0005 + Math.random() * 0.001
+      speed: 0.0004 + Math.random() * 0.0012
     };
     veinGroup.add(p);
     veinParticles.push(p);
   }
 
-  // 2. Main Kinetic Nucleus
-  const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+  // 2. Data Starfield (Background Nodes)
+  const starCount = 1500;
+  const starPositions = new Float32Array(starCount * 3);
+  const starColors = new Float32Array(starCount * 3);
+  const starGeometry = new THREE.BufferGeometry();
+
+  for (let i = 0; i < starCount; i++) {
+    const ix = i * 3;
+    starPositions[ix] = (Math.random() - 0.5) * 400;
+    starPositions[ix + 1] = (Math.random() - 0.5) * 400;
+    starPositions[ix + 2] = (Math.random() - 0.5) * 400;
+
+    const mixedColor = new THREE.Color().setHSL(Math.random() * 0.1 + 0.5, 0.8, 0.8);
+    starColors[ix] = mixedColor.r;
+    starColors[ix + 1] = mixedColor.g;
+    starColors[ix + 2] = mixedColor.b;
+  }
+
+  starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+  
+  const starMaterial = new THREE.PointsMaterial({
+    size: 0.6,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.4,
+    sizeAttenuation: true
+  });
+  
+  const starField = new THREE.Points(starGeometry, starMaterial);
+  scene.add(starField);
+
+  // 3. Holographic Orbiting Rings
+  const ringGroup = new THREE.Group();
+  coreGroup.add(ringGroup);
+
+  const createRing = (radius, thickness, color, rx, ry, speed) => {
+    const geometry = new THREE.TorusGeometry(radius, thickness, 2, 100);
+    const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.4 });
+    const ring = new THREE.Mesh(geometry, material);
+    ring.rotation.set(rx, ry, 0);
+    ring.userData = { speed: speed };
+    ringGroup.add(ring);
+    return ring;
+  };
+
+  const rings = [
+    createRing(18, 0.1, 0x00f0ff, Math.PI/2, 0.2, 0.01),
+    createRing(22, 0.05, 0x8b5cf6, 0.5, Math.PI/2, -0.008),
+    createRing(26, 0.08, 0x00f0ff, -0.5, 0.5, 0.005)
+  ];
+
+  // 4. Main Kinetic Nucleus
+  const cubeGeometry = new THREE.IcosahedronGeometry(8, 1);
   const cubeMaterial = new THREE.MeshPhysicalMaterial({
     color: 0x0a0a20,
-    metalness: 0.95,
-    roughness: 0.05,
-    clearcoat: 1.0,
+    metalness: 1,
+    roughness: 0.1,
+    wireframe: true,
     emissive: 0x00f0ff,
-    emissiveIntensity: 0.1
+    emissiveIntensity: 0.5
   });
-  const mainCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  coreGroup.add(mainCube);
+  const mainCore = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  coreGroup.add(mainCore);
 
-  // Mechanical Panels (Kinetic)
+  const innerCore = new THREE.Mesh(
+    new THREE.SphereGeometry(4, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.2 })
+  );
+  coreGroup.add(innerCore);
+
+  // Mechanical Panels
   const plateGroup = new THREE.Group();
   coreGroup.add(plateGroup);
 
   const createPlate = (x, y, z, rx, ry) => {
     const plate = new THREE.Mesh(
-      new THREE.BoxGeometry(7, 7, 0.5),
-      new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 1, roughness: 0.1, transparent: true, opacity: 0.9 })
+      new THREE.BoxGeometry(6, 6, 0.2),
+      new THREE.MeshPhysicalMaterial({ color: 0x8b5cf6, metalness: 1, roughness: 0.1, transparent: true, opacity: 0.7 })
     );
     plate.position.set(x, y, z);
     plate.rotation.set(rx, ry, 0);
@@ -176,56 +231,54 @@ function initThreeScene() {
   };
 
   const plates = [
-    createPlate(0, 0, 8, 0, 0),
-    createPlate(0, 0, -8, 0, 0),
-    createPlate(8, 0, 0, 0, Math.PI/2),
-    createPlate(-8, 0, 0, 0, Math.PI/2),
-    createPlate(0, 8, 0, Math.PI/2, 0),
-    createPlate(0, -8, 0, Math.PI/2, 0)
+    createPlate(0, 0, 10, 0, 0),
+    createPlate(0, 0, -10, 0, 0),
+    createPlate(10, 0, 0, 0, Math.PI/2),
+    createPlate(-10, 0, 0, 0, Math.PI/2),
+    createPlate(0, 10, 0, Math.PI/2, 0),
+    createPlate(0, -10, 0, Math.PI/2, 0)
   ];
 
-  // 3. Kinetic Unfolding (GSAP ScrollTrigger)
+  // ── Animation Loop ──
   gsap.registerPlugin(ScrollTrigger);
 
   gsap.to(plateGroup.scale, {
-    x: 2.5, y: 2.5, z: 2.5,
+    x: 3, y: 3, z: 3,
     scrollTrigger: {
       trigger: "body",
       start: "top top",
       end: "bottom bottom",
-      scrub: 1
+      scrub: 1.5
     }
   });
 
   gsap.to(coreGroup.rotation, {
-    y: Math.PI * 4,
+    y: Math.PI * 6,
     scrollTrigger: {
       trigger: "body",
       start: "top top",
       end: "bottom bottom",
-      scrub: 1
+      scrub: 1.5
     }
   });
 
-  // 4. Lights & Ambient
-  const light1 = new THREE.PointLight(0x00f0ff, 600);
-  light1.position.set(30, 30, 50);
+  const light1 = new THREE.PointLight(0x00f0ff, 1200);
+  light1.position.set(60, 60, 60);
   scene.add(light1);
 
-  const light2 = new THREE.PointLight(0x8b5cf6, 500);
-  light2.position.set(-30, -30, 50);
+  const light2 = new THREE.PointLight(0x8b5cf6, 1000);
+  light2.position.set(-60, -60, 60);
   scene.add(light2);
 
-  const cursorLight = new THREE.PointLight(0xffffff, 150);
+  const cursorLight = new THREE.PointLight(0xffffff, 250);
   scene.add(cursorLight);
 
-  // ── Motion Logic ──
   const mouse = { x: 0, y: 0 };
   const targetMouse = { x: 0, y: 0 };
   window.addEventListener('mousemove', (e) => {
     targetMouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
     targetMouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
-    cursorLight.position.set(targetMouse.x * 40, targetMouse.y * 40, 40);
+    cursorLight.position.set(targetMouse.x * 60, targetMouse.y * 60, 50);
   });
 
   window.addEventListener('resize', () => {
@@ -237,10 +290,9 @@ function initThreeScene() {
   function animate() {
     requestAnimationFrame(animate);
     
-    mouse.x += (targetMouse.x - mouse.x) * 0.05;
-    mouse.y += (targetMouse.y - mouse.y) * 0.05;
+    mouse.x += (targetMouse.x - mouse.x) * 0.04;
+    mouse.y += (targetMouse.y - mouse.y) * 0.04;
 
-    // Pulse Vein Particles
     veinParticles.forEach(p => {
       p.userData.t += p.userData.speed;
       if (p.userData.t > 1) p.userData.t = 0;
@@ -248,20 +300,32 @@ function initThreeScene() {
       p.position.copy(pos);
     });
 
-    // Sub-rotations
-    mainCube.rotation.x += 0.005;
-    mainCube.rotation.y += 0.005;
-    plateGroup.rotation.z += 0.002;
+    mainCore.rotation.x += 0.002;
+    mainCore.rotation.y += 0.003;
+    innerCore.scale.setScalar(1.2 + Math.sin(Date.now() * 0.002) * 0.15);
+    mainCore.material.emissiveIntensity = 0.4 + Math.sin(Date.now() * 0.002) * 0.3;
+
+    rings.forEach(ring => {
+      ring.rotation.z += ring.userData.speed;
+      ring.rotation.x += ring.userData.speed * 0.6;
+    });
+
+    starField.rotation.y += 0.0004;
+    starField.rotation.x += 0.0001;
+
+    plateGroup.rotation.z += 0.001;
     
-    // Mouse Parallax
-    veinGroup.rotation.x = mouse.y * 0.05;
-    veinGroup.rotation.y = mouse.x * 0.05;
+    // Enhanced Parallax
+    coreGroup.rotation.x = mouse.y * 0.1;
+    coreGroup.rotation.z = -mouse.x * 0.1;
+    
+    veinGroup.rotation.x = mouse.y * 0.08;
+    veinGroup.rotation.y = mouse.x * 0.08;
     
     renderer.render(scene, camera);
   }
 
-  // Staggered boot-up
-  gsap.from(coreGroup.scale, { x: 0, y: 0, z: 0, duration: 2, ease: 'expo.out' });
+  gsap.from(coreGroup.scale, { x: 0, y: 0, z: 0, duration: 3, ease: 'expo.out' });
   animate();
 }
 
@@ -434,21 +498,6 @@ function initGSAPAnimations() {
     });
   });
 
-  // ── Skill cards ──
-  gsap.utils.toArray('.skill-card').forEach((card, i) => {
-    gsap.to(card, {
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 90%',
-      },
-      y: 0,
-      opacity: 1,
-      rotateX: 0,
-      duration: 0.7,
-      delay: (i % 6) * 0.08,
-      ease: 'power3.out'
-    });
-  });
 
   // ── Project cards ──
   gsap.utils.toArray('.project-card').forEach((card, i) => {
@@ -542,49 +591,6 @@ function applyTextSplit(target) {
   }
 }
 
-/* ═══════════════════ SKILL RINGS ═══════════════════ */
-function initSkillRings() {
-  // Add SVG gradient definition to body
-  const svgDefs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svgDefs.setAttribute("width", "0");
-  svgDefs.setAttribute("height", "0");
-  svgDefs.style.position = "absolute";
-  svgDefs.innerHTML = `
-    <defs>
-      <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#00f0ff" />
-        <stop offset="100%" style="stop-color:#8b5cf6" />
-      </linearGradient>
-    </defs>
-  `;
-  document.body.appendChild(svgDefs);
-
-  // Animate rings on scroll
-  const circumference = 2 * Math.PI * 54; // r=54
-
-  document.querySelectorAll('.ring-fill').forEach(ring => {
-    const percent = parseInt(ring.dataset.percent) || 0;
-    const offset = circumference - (percent / 100) * circumference;
-
-    // Use GSAP setAttribute since stroke-dashoffset is a presentational attribute
-    ring.style.strokeDasharray = circumference;
-    ring.style.strokeDashoffset = circumference;
-    ring.style.stroke = 'url(#ringGradient)';
-
-    ScrollTrigger.create({
-      trigger: ring.closest('.skill-card'),
-      start: 'top 90%',
-      onEnter: () => {
-        gsap.to(ring, {
-          strokeDashoffset: offset,
-          duration: 1.5,
-          ease: 'power3.out',
-        });
-      },
-      once: true,
-    });
-  });
-}
 
 /* ═══════════════════ COUNTER ANIMATION ═══════════════════ */
 function initCounters() {
@@ -655,23 +661,4 @@ document.addEventListener('mousemove', (e) => {
 });
 
 /* ═══════════════════ CONTACT FORM ═══════════════════ */
-function initContactForm() {
-  const form = document.getElementById('contact-form');
-  if (!form) return;
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const btn = form.querySelector('button[type="submit"]');
-    const originalHTML = btn.innerHTML;
-
-    btn.innerHTML = '<span>Message Sent! ✓</span>';
-    btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.style.background = '';
-      form.reset();
-    }, 3000);
-  });
-}
